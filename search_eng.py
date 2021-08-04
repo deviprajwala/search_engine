@@ -34,7 +34,7 @@ weight = {}
 #dictionary to store the term and the weight which is the product of term frequency and inverse document frequency
 
 threshold = 5
-wlink = [[0 for x in range (30)] for y in range(30)]
+wlink = [[0 for x in range (11)] for y in range(11)]
 nodes=[]
 outlinks = {}
 rank_weight = {}
@@ -188,7 +188,7 @@ def prediction(similarity,doc_count):
             for i in range(threshold):
                 
                 ans = max( similarity, key = similarity.get)
-                nodes.append(ans[-2:])
+                nodes.append(int(ans[-2:]))
                 #to print the document name and its rank
 
                 similarity.pop(ans)
@@ -196,31 +196,33 @@ def prediction(similarity,doc_count):
 def read_weblink_graph():
     #print("Enter the number of rows in a matrix\n")
     n = int(input())
-    for i in range (n):
-        for j in range(n):
+    for i in range (1,n+1):
+        for j in range(1,n+1):
             wlink[i][j]=int(input())
-    #print(wlink)
+
 
 def rank_graph():
     count = 0
     val = 1.00/len(nodes)
     connect = []
-    for i in nodes:
-        for j in range(10):
+    for i in range (1,len(nodes)+1):
+        for j in range(1,11):
             if( wlink[int(i)][j] == 1 and i!=j ):
                 count += 1
-                print(i,j)
-                connecters.update({i:connect.append(j)})
-                
+                if( j in nodes):
+                    connect.append(j)
+        dummy = connect.copy()
+        connecters.update({i:dummy})     
         outlinks.update({i:count})
         rank_weight.update({i:val})
         count = 0
-        
+        connect.clear()
     print(outlinks)
     print(rank_weight)
     print(connecters)
-
-
+    print(nodes)
+def rank_updation():
+    print(rank_weight)
 
 def main():
     corpus = pandas.read_csv(r'corpus.csv')
@@ -263,4 +265,5 @@ def main():
     read_weblink_graph()
     
     rank_graph()
+    rank_updation()
 main()
