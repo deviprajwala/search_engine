@@ -1,0 +1,11 @@
+documents ,term1 ,term2 ,term3 ,term4 ,term5 
+document1,cat,dog,tiger,zebra,cheetah
+document2,apple,pineapple,grapes,orange,gauva
+document3,tomato,beans,brinjal,chilli,garlic
+document4,red,green,blue,pink,yellow
+document5,cat,dog,tiger,pink,yellow
+document6,tomato,beans,cat,dog,tiger
+document7,dog,tiger,zebra,chilli,garlic
+document8,pineapple,grapes,orange,green,blue
+document9,blue,pink,yellow,chilli,garlic
+document10,tomato,tiger,red,chilli,apple
