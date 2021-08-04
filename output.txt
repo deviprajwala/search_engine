@@ -1,7 +1,0 @@
-document10 is the most relevant document
-ranking of the documents
-document10 rank is 1
-document6 rank is 2
-document4 rank is 3
-document7 rank is 4
-document3 rank is 5

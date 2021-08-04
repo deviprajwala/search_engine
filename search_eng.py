@@ -34,6 +34,11 @@ weight = {}
 #dictionary to store the term and the weight which is the product of term frequency and inverse document frequency
 
 threshold = 5
+wlink = [[0 for x in range (30)] for y in range(30)]
+nodes=[]
+outlinks = {}
+rank_weight = {}
+connecters = {}
 
 def filter( documents, rows, cols ):
     '''function to read and separate the name of the documents and the terms present in it to a separate list  from the data frame and also create a dictionary which 
@@ -178,41 +183,65 @@ def prediction(similarity,doc_count):
         with redirect_stdout( f ):
             #to redirect the output to a text file
 
-            ans = max( similarity, key = similarity.get )
-            print(ans, "is the most relevant document")
-            #to print the name of the document which is most relevant
 
-            print( "ranking of the documents" )
+            #to print the name of the document which is most relevant            
             for i in range(threshold):
                 
                 ans = max( similarity, key = similarity.get)
-                print(ans, "rank is", i+1)
+                nodes.append(ans[-2:])
                 #to print the document name and its rank
 
                 similarity.pop(ans)
 
-            
+def read_weblink_graph():
+    #print("Enter the number of rows in a matrix\n")
+    n = int(input())
+    for i in range (n):
+        for j in range(n):
+            wlink[i][j]=int(input())
+    #print(wlink)
+
+def rank_graph():
+    count = 0
+    val = 1.00/len(nodes)
+    connect = []
+    for i in nodes:
+        for j in range(10):
+            if( wlink[int(i)][j] == 1 and i!=j ):
+                count += 1
+                print(i,j)
+                connecters.update({i:connect.append(j)})
+                
+        outlinks.update({i:count})
+        rank_weight.update({i:val})
+        count = 0
+        
+    print(outlinks)
+    print(rank_weight)
+    print(connecters)
+
+
 
 def main():
-    documents = pandas.read_csv(r'documents.csv')
+    corpus = pandas.read_csv(r'corpus.csv')
     #to read the data from the csv file as a dataframe
 
     #web_links = pandas.read_csv(r'graph.csv')
     #to read the data from the csv file as a dataframe
 
-    rows = len( documents )
+    rows = len( corpus )
     #to get the number of rows
 
-    cols = len( documents.columns ) 
+    cols = len( corpus.columns ) 
     #to get the number of columns
 
-    filter( documents, rows, cols )
+    filter( corpus, rows, cols )
     #function call to read and separate the name of the documents and the terms present in it to a separate list  from the data frame and also create a dictionary which 
     #has the name of the document as key and the terms present in it as the list of strings  which is the value of the key
 
     compute_weight(rows, cols )  
 
-    print("Enter the query")
+    #print("Enter the query")
     query = input()
     #to get the query input from the user, the below input is given for obtaining the output as in output.txt file
     #one three three
@@ -228,8 +257,10 @@ def main():
     #Function call to calculate the similarity measure in which the weight of the query and the document is multiplied in the numerator and the 
     #the weight is squared and squareroot is taken the weights of the query and document
 
-    print(similarity)
     prediction(similarity, rows)
     #Function call to predict the document which is relevant to the query
     
+    read_weblink_graph()
+    
+    rank_graph()
 main()
