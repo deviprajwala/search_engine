@@ -37,8 +37,10 @@ threshold = 5
 wlink = [[0 for x in range (11)] for y in range(11)]
 nodes=[]
 outlinks = {}
+inlinks = {}
 rank_weight = {}
-connecters = {}
+in_connecters = {}
+out_connecters = {}
 
 def filter( documents, rows, cols ):
     '''function to read and separate the name of the documents and the terms present in it to a separate list  from the data frame and also create a dictionary which 
@@ -202,27 +204,43 @@ def read_weblink_graph():
 
 
 def rank_graph():
-    count = 0
+    out_count = 0
+    in_count = 0
     val = 1.00/len(nodes)
-    connect = []
-    for i in range (1,len(nodes)+1):
+    out_connect = []
+    in_connect = []
+    for i in (nodes):
         for j in range(1,11):
             if( wlink[int(i)][j] == 1 and i!=j ):
-                count += 1
                 if( j in nodes):
-                    connect.append(j)
-        dummy = connect.copy()
-        connecters.update({i:dummy})     
-        outlinks.update({i:count})
+                    out_count += 1
+                    out_connect.append(j)
+            if( wlink[j][int(i)] == 1 and i!=j ):
+                if( j in nodes):
+                    in_count += 1
+                    in_connect.append(j)
+        dummy = out_connect.copy()
+        out_connecters.update({i:dummy})
+        out_connect.clear()     
+        outlinks.update({i:out_count})
+        inlinks.update({i:in_count})
+        dummy = in_connect.copy()
+        in_connecters.update({i:dummy})
+        in_connect.clear()
         rank_weight.update({i:val})
-        count = 0
-        connect.clear()
+        out_count = 0
+        in_count = 0
+        
     print(outlinks)
+    print(inlinks)
     print(rank_weight)
-    print(connecters)
-    print(nodes)
+    
 def rank_updation():
-    print(rank_weight)
+    for i in rank_weight:
+        val = 0
+        for j in range(outlinks.get(i)):
+            #val += 
+            print(i , rank_weight.get(i))
 
 def main():
     corpus = pandas.read_csv(r'corpus.csv')
