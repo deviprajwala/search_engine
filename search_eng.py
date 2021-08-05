@@ -34,13 +34,28 @@ weight = {}
 #dictionary to store the term and the weight which is the product of term frequency and inverse document frequency
 
 threshold = 5
+#to get the top 5 releveant documents using vector space model, this threshold can be adjusted based on the requirement
+
 wlink = [[0 for x in range (11)] for y in range(11)]
+#a two dimentional array to store the connection between the nodes
+
 nodes=[]
+#list to store the nodes
+
 outlinks = {}
+#dictionary to store the node and the number of outlinks associated to it
+
 inlinks = {}
+#dictionary to store the node and the number of inlinks associated to it
+
 rank_weight = {}
+#dictionary to store the node and the weight associated to it
+
 in_connecters = {}
+#dictionary to store the node and the name of other nodes pointing towards it
+
 out_connecters = {}
+#dictionary to store the node and the name of other nodes pointing away from it
 
 def filter( documents, rows, cols ):
     '''function to read and separate the name of the documents and the terms present in it to a separate list  from the data frame and also create a dictionary which 
@@ -184,52 +199,94 @@ def prediction(similarity,doc_count):
     with open('output.txt', 'w') as f:
         with redirect_stdout( f ):
             #to redirect the output to a text file
-
-
-            #to print the name of the document which is most relevant            
+    
             for i in range(threshold):
-                
+             #to print the name of the document which is most relevant            
                 ans = max( similarity, key = similarity.get)
                 nodes.append(int(ans[-2:]))
                 #to print the document name and its rank
 
                 similarity.pop(ans)
+                #answer is poped from dictionary
 
 def read_weblink_graph():
+    ''' function to read the bits which is redirected by a input file and store it in the matrix'''
     #print("Enter the number of rows in a matrix\n")
     n = int(input())
+    #n is the number of documents present in the corpus
+
     for i in range (1,n+1):
         for j in range(1,n+1):
             wlink[i][j]=int(input())
+            #input is read and stored in the array
 
 
 def rank_graph():
+    ''' function to calculate the necessary parameters required to rank the documents by considering thier inlinks and outlinks, here the weights associated with each of the page is updated,along
+    with that we even find the number of inlinks and outlinks associated with it and update the connection of nodes in the dictionaries named out_connecters
+    and in connectors'''
+    
     out_count = 0
     in_count = 0
+    #initializing the variables to zero
+
     val = 1.00/len(nodes)
+    #initial weight for the nodes is the 1 divided by the number of nodes
+
     out_connect = []
     in_connect = []
+    #declaring the the lists for future operations
+
     for i in (nodes):
         for j in range(1,11):
+            #since there are 10 documents in the corpus
+
             if( wlink[int(i)][j] == 1 and i!=j ):
+                #if there is a outlink (connection from the node to other node) update the necessary parameters
                 if( j in nodes):
                     out_count += 1
+                    #update the variable outcount
                     out_connect.append(j)
+                    #update the dictionary with the name of the node
+
             if( wlink[j][int(i)] == 1 and i!=j ):
+                 #if there is a inlink (connection to the node from other node) update the necessary parameters
                 if( j in nodes):
                     in_count += 1
+                    #update the variable incount
                     in_connect.append(j)
+                    #update the dictionary with the name of the node
+
         dummy = out_connect.copy()
+        #copy the list to a dummy list
+
         out_connecters.update({i:dummy})
-        out_connect.clear()     
-        outlinks.update({i:out_count})
-        inlinks.update({i:in_count})
+        #update the outconnect list in the dictionary
+
+        out_connect.clear()
+        #clear the list
+             
         dummy = in_connect.copy()
+        #copy the list to a dummy list
+
         in_connecters.update({i:dummy})
+        #update the inconnect list in the dictionary
+
         in_connect.clear()
+        #clear the list
+       
+        outlinks.update({i:out_count})
+        #update the dictionary with the number of outlinks
+
+        inlinks.update({i:in_count})
+        #update the dictionary with the number of inlinks
+        
         rank_weight.update({i:val})
+        #initialise the dictionary with the weights of each of the documents 
+        
         out_count = 0
         in_count = 0
+        #reinitialise the variables to zero
         
     #print(outlinks)
     #print(inlinks)
@@ -237,30 +294,51 @@ def rank_graph():
     #print(rank_weight)
     
 def rank_updation():
-    new_rank = {}
-    for l in range(10):
-        #print(rank_weight)
-        for i in rank_weight:
-            val = 0
-            if( inlinks.get(i) != 0 ):
-                for k in in_connecters.get(i):
-                    val += rank_weight.get(k)/outlinks.get(k)
+    '''function to perform the computations which are corresponding to the updation of weights, here the weights of each of the nodes are calculated 
+    based on the inlinks and outlinks associated with the documents which are represented as nodes'''
 
-                new_rank.update({i:val})           
+    new_rank = {}
+    #initialising a dictionary which is required to perform the operation
+    
+    iterations = 10
+    #a variable required to specify the the of iterations required in rank updation , here we have considered it as 10
+
+    for l in range(iterations):    
+        for i in rank_weight:
+            #for each of the node present in the dictionary
+
+            val = 0
+            #initialising a variable to zero
+             
+            if( inlinks.get(i) != 0 ):
+                #if the node has inlinks connected to it, proceed with the below computations
+
+                for k in in_connecters.get(i):
+                    #for each of the nodes pointing towards the node i, calculate the weight
+
+                    val += rank_weight.get(k)/outlinks.get(k)
+                    #weight contributed by the other node to node i
+
+                new_rank.update({i:val}) 
+                #update the dictionary with the weights of each of the documents      
+
                 val = 0
+                #reinitialising a variable to zero
+
         for i in new_rank:
             rank_weight.update({i:new_rank.get(i)})
+            #update the dictionary with the weights of each of the documents afer finishing each of the iteration   
+              
         #print(rank_weight,"\n")
     
     ans = max( rank_weight, key = rank_weight.get)
-    print("document",ans, "is the most revelevant document")
+    #obtain the document with the highest rank , and display it to the user
 
+    print("document",ans, "is the most revelevant document")
+    #display the most relevant page
 
 def main():
     corpus = pandas.read_csv(r'corpus.csv')
-    #to read the data from the csv file as a dataframe
-
-    #web_links = pandas.read_csv(r'graph.csv')
     #to read the data from the csv file as a dataframe
 
     rows = len( corpus )
@@ -274,6 +352,8 @@ def main():
     #has the name of the document as key and the terms present in it as the list of strings  which is the value of the key
 
     compute_weight(rows, cols )  
+    #Function to compute the weight for each of the terms in the document. Here the weight is calculated with the help of term frequency and 
+    #inverse document frequency
 
     #print("Enter the query")
     query = input()
@@ -292,10 +372,19 @@ def main():
     #the weight is squared and squareroot is taken the weights of the query and document
 
     prediction(similarity, rows)
-    #Function call to predict the document which is relevant to the query
+    #Function call to predict the document which is relevant to the query, the top 5 most relevant documents is written to a text file
     
     read_weblink_graph()
+    #function call to read the bits which is redirected by a input file and store it in the matrix
     
     rank_graph()
+    #function call to calculate the necessary parameters required to rank the documents by considering thier inlinks and outlinks, here the weights associated with each of the page is updated,along
+    #with that we even find the number of inlinks and outlinks associated with it and update the connection of nodes in the dictionaries named out_connecters
+    #and in connectors
+
     rank_updation()
+    #function to perform the computations which are corresponding to the updation of weights, here the weights of each of the nodes are calculated 
+    #based on the inlinks and outlinks associated with the documents which are represented as nodes
+
+
 main()
