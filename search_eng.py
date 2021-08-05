@@ -231,16 +231,30 @@ def rank_graph():
         out_count = 0
         in_count = 0
         
-    print(outlinks)
-    print(inlinks)
-    print(rank_weight)
+    #print(outlinks)
+    #print(inlinks)
+    #print(out_connecters)
+    #print(rank_weight)
     
 def rank_updation():
-    for i in rank_weight:
-        val = 0
-        for j in range(outlinks.get(i)):
-            #val += 
-            print(i , rank_weight.get(i))
+    new_rank = {}
+    for l in range(10):
+        #print(rank_weight)
+        for i in rank_weight:
+            val = 0
+            if( inlinks.get(i) != 0 ):
+                for k in in_connecters.get(i):
+                    val += rank_weight.get(k)/outlinks.get(k)
+
+                new_rank.update({i:val})           
+                val = 0
+        for i in new_rank:
+            rank_weight.update({i:new_rank.get(i)})
+        #print(rank_weight,"\n")
+    
+    ans = max( rank_weight, key = rank_weight.get)
+    print("document",ans, "is the most revelevant document")
+
 
 def main():
     corpus = pandas.read_csv(r'corpus.csv')
