@@ -195,19 +195,20 @@ def similarity_computation(query_weight):
 
 def prediction(similarity,doc_count):
     '''Function to predict the document which is relevant to the query '''
-    
-    with open('output.txt', 'w') as f:
-        with redirect_stdout( f ):
-            #to redirect the output to a text file
-    
-            for i in range(threshold):
-             #to print the name of the document which is most relevant            
-                ans = max( similarity, key = similarity.get)
-                nodes.append(int(ans[-2:]))
-                #to print the document name and its rank
 
-                similarity.pop(ans)
-                #answer is poped from dictionary
+    print("5 most relevant documents\n")
+    for i in range(threshold):
+    #to print the name of the document which is most relevant    
+            
+        ans = max( similarity, key = similarity.get)
+        #get the document with the highest similarity measure
+
+        print(ans)
+        nodes.append(int(ans[-2:]))
+        #to print the document name and append it to the list
+
+        similarity.pop(ans)
+        #answer is poped from dictionary
 
 def read_weblink_graph():
     ''' function to read the bits which is redirected by a input file and store it in the matrix'''
@@ -383,7 +384,7 @@ def main():
     #and in connectors
 
     rank_updation()
-    #function to perform the computations which are corresponding to the updation of weights, here the weights of each of the nodes are calculated 
+    #function call to perform the computations which are corresponding to the updation of weights, here the weights of each of the nodes are calculated 
     #based on the inlinks and outlinks associated with the documents which are represented as nodes
 
 
