@@ -35,5 +35,5 @@ Basic PageRank Update Rule: Each page divides its current PageRank equally acros
 going links, it passes all its current PageRank to itself.) Each page updates its new PageRank to be the sum of the shares it receives.
 
 Reference:
-Modern information retrieval by Ricardo Baeza-Yates, Berthier Ribeiro-Neto
-Networks, Crowds, and Markets Reasoning About a Highly Connected World by David Easley, Jon Kleinberg
+Modern information retrieval by Ricardo Baeza-Yates, Berthier Ribeiro-Neto.
+Networks, Crowds, and Markets Reasoning About a Highly Connected World by David Easley, Jon Kleinberg.
