@@ -1,4 +1,4 @@
-#implementation of vector space model for document retrival
+#implementation of vector space model and page rank algorithm for search engine
 
 import pandas
 #module to read the contents of the file from a csv file
